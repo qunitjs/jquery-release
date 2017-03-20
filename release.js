@@ -38,11 +38,11 @@ commonTasks = [
 	Release._section( "building release" ),
 	Release._createReleaseBranch,
 
-	Release._section( "generating changelog" ),
-	Release._generateChangelog,
+	// Release._section( "generating changelog" ),
+	// Release._generateChangelog,
 
-	Release._section( "gathering contributors" ),
-	Release._gatherContributors,
+	// Release._section( "gathering contributors" ),
+	// Release._gatherContributors,
 
 	Release._section( "pushing tag" ),
 	Release.confirmReview,
