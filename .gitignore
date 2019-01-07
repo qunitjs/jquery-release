@@ -1,4 +1,1 @@
-node_modules/grunt
-node_modules/grunt-contrib-jshint
-test-*.sh
-package-lock.json
+/__release
