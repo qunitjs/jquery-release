@@ -8,11 +8,15 @@
     "which": "1.0.5"
   },
   "devDependencies": {
-    "jshint": "2.9.7"
+    "eslint": "5.12.0",
+    "eslint-config-jquery": "1.0.1"
   },
   "scripts": {
-    "test": "jshint ."
+    "test": "eslint ."
   },
+  "eslintIgnore": [
+    "/__release"
+  ],
   "repository": "qunitjs/jquery-release",
   "license": "MIT"
 }
