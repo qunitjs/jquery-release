@@ -1,4 +1,4 @@
-Usage: node release.js [--pre-release=version] [--branch=branch] --remote=repo
+Usage: node release.js [--pre-release=version] [--branch=branch] [--remote=repo]
 
 OPTIONS
 	--pre-release=version
@@ -8,7 +8,8 @@ OPTIONS
 
 	--branch=branch
 		Specifies which branch to create the release from.
-		Defaults to master.
+
+		Default: master.
 
 	--remote=repo
 		Specifies the remote repository to work with. There are three
@@ -23,5 +24,10 @@ OPTIONS
 
 TEST RELEASES
 	To test the release process without affecting any official
-	repositories, specificy a custom remote, such as your own fork of
-	the repository.
+	repositories, specify a file system path, such as your clone
+	of qunitjs/qunit. Or your personal fork myname/qunit on GitHub.
+
+	When --remote is set to something that doesn't start with "qunitjs/",
+	the release script will automatically be in "Test mode", which
+	means among other things that the "CDN" tasks push to jquery/fake-cdn.git
+	instead of the real one, and that the "npm" tasks are skipped.

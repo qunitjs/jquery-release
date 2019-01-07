@@ -1,98 +1,87 @@
-#!/usr/bin/env node
+var bootstrap = require( "./lib/bootstrap.js" ),
+	cdn = require( "./lib/cdn.js" ),
+	npm = require( "./lib/npm.js" ),
+	prompt = require( "./lib/prompt.js" ),
+	repo = require( "./lib/repo.js" ),
+	util = require( "./lib/util.js" ),
 
-var commonTasks, stableTasks,
-	fs = require( "fs" ),
+	// State and config object
 	Release = {
-		define: function( props ) {
-			for ( var prop in props ) {
-				Release[ prop ] = props[ prop ];
-			}
-		},
 
-		complete: function() {
-			console.log( "Release complete." );
-			console.log( "Please review the project-specific release checklist." );
-		}
-	};
+		// set by bootstrap.parseArguments
+		args: null,
+		branch: null,
+		preRelease: false,
+		remote: null,
+		isTest: true,
 
-fs.readdirSync( "./lib" ).forEach(function( module ) {
-	require( "./lib/" + module )( Release );
-});
+		// set by bootstrap.createReleaseDirectory
+		dir: null,
+
+		// set by repo.getVersions
+		newVersion: null,
+		nextVersion: null
+	},
+
+	commonTasks, stableTasks;
+
+function complete() {
+	console.log( "Release complete." );
+	console.log( "Please review the project-specific release checklist." );
+}
+
+global.Release = Release;
 
 commonTasks = [
-	Release._checkExecutables,
-	Release._parseArguments,
-	Release.confirm,
+	bootstrap.checkExecutables,
+	bootstrap.parseArguments,
 
-	Release._createReleaseDirectory,
+	prompt.confirm,
 
-	Release._section( "setting up repo" ),
-	Release._cloneRepo,
-	Release._checkRepoState,
-	Release._checkNpmCredentials,
+	bootstrap.createReleaseDirectory,
 
-	Release._section( "calculating versions" ),
-	Release._getVersions,
-	Release.confirm,
+	util.section( "setting up repo" ),
+	repo.cloneRepo,
+	repo.checkAuthorsTxt,
+	npm.checkNpmCredentials,
 
-	Release._section( "building release" ),
-	Release._createReleaseBranch,
+	util.section( "calculating versions" ),
+	repo.getVersions,
+	prompt.confirm,
 
-	// Release._section( "generating changelog" ),
-	// Release._generateChangelog,
+	util.section( "building release" ),
+	repo.createReleaseBranch,
 
-	// Release._section( "gathering contributors" ),
-	// Release._gatherContributors,
+	util.section( "pushing tag" ),
+	prompt.confirmReview,
+	repo.pushRelease,
 
-	Release._section( "pushing tag" ),
-	Release.confirmReview,
-	Release._pushRelease,
+	util.section( "publishing to jQuery CDN" ),
+	cdn.copyCdnArtifacts,
+	prompt.confirmReview,
+	cdn.pushToCdn,
 
-	function( fn ) {
-		if ( Release.cdnPublish ) {
-			Release._section( "publishing to jQuery CDN" )();
-			Release.walk([
-				Release._copyCdnArtifacts,
-				Release.confirmReview,
-				Release._pushToCdn
-			], fn );
-		} else {
-			fn();
-		}
-	},
-
-	function( fn ) {
-		if ( Release.dist ) {
-			Release._section( "additional custom distribution" );
-			Release.dist( fn );
-		} else {
-			fn();
-		}
-	},
-
-	function() {
-		if ( Release.npmPublish ) {
-			Release._section( "publishing to npm" )();
-		}
-	},
-	Release._publishNpm
+	util.section( "publishing to npm" ),
+	npm.publishNpm
 ];
 
 stableTasks = [
-	Release._section( "updating branch version" ),
-	Release._updateBranchVersion,
+	util.section( "updating branch version" ),
+	repo.updateBranchVersion,
 
 	function() {
-		Release._section( "pushing " + Release.branch )();
+		// use closure to capture live state of 'Release.branch'
+		util.section( "pushing " + Release.branch )();
 	},
-	Release.confirmReview,
-	Release._pushBranch
+
+	prompt.confirmReview,
+	repo.pushBranch
 ];
 
-Release.walk( commonTasks, function() {
+util.walk( commonTasks, function() {
 	if ( Release.preRelease ) {
-		return Release.complete();
+		return complete();
 	}
 
-	Release.walk( stableTasks, Release.complete );
+	util.walk( stableTasks, complete );
 });

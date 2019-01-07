@@ -8,12 +8,11 @@
     "which": "1.0.5"
   },
   "devDependencies": {
-    "grunt": "1.0.3",
-    "grunt-contrib-jshint": "2.0.0"
+    "jshint": "2.9.7"
   },
   "scripts": {
-    "test": "grunt"
+    "test": "jshint ."
   },
-  "repository": "jquery/jquery-release",
+  "repository": "qunitjs/jquery-release",
   "license": "MIT"
 }
