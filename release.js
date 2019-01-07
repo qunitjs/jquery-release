@@ -70,6 +70,7 @@ stableTasks = [
 	repo.updateBranchVersion,
 
 	function() {
+
 		// use closure to capture live state of 'Release.branch'
 		util.section( "pushing " + Release.branch )();
 	},
@@ -84,4 +85,4 @@ util.walk( commonTasks, function() {
 	}
 
 	util.walk( stableTasks, complete );
-});
+} );
