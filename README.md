@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/qunitjs/jquery-release.svg?branch=master)](https://travis-ci.org/qunitjs/jquery-release)
+[![Build Status](https://travis-ci.com/qunitjs/jquery-release.svg?branch=master)](https://travis-ci.com/qunitjs/jquery-release)
 
 # QUnit Release Automation
 
